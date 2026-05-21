@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Members — FitTrack Pro{% endblock %}
+{% block page_title %}Members{% endblock %}
+{% block topbar_right %}
+  <a href="/member/new" class="btn btn-accent">＋ Enroll Member</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="GET" class="filter-bar">
+    <input type="text" name="q" placeholder="🔍 Search name / email / phone..." value="{{ search }}" style="flex:1;min-width:200px;">
+    <select name="status">
+      <option value="">All Status</option>
+      <option value="Active"   {% if status=='Active' %}selected{% endif %}>Active</option>
+      <option value="Expired"  {% if status=='Expired' %}selected{% endif %}>Expired</option>
+    </select>
+    <select name="plan">
+      <option value="">All Plans</option>
+      {% for p in plans %}<option value="{{ p }}" {% if plan==p %}selected{% endif %}>{{ p }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="btn btn-ghost">Filter</button>
+    <a href="/members" class="btn btn-ghost">Clear</a>
+  </form>
+
+  {% if members %}
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Member</th><th>Phone</th><th>Plan</th>
+        <th>Joined</th><th>Expires</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in members %}
+      <tr>
+        <td style="color:var(--muted);font-size:0.78rem;">{{ '%03d'%m.id }}</td>
+        <td>
+          <div style="font-weight:600">{{ m.name }}</div>
+          <div style="font-size:0.75rem;color:var(--muted)">{{ m.email }}</div>
+        </td>
+        <td style="color:var(--muted)">{{ m.phone }}</td>
+        <td><span class="badge badge-{{ m.plan|lower }}">{{ m.plan }}</span></td>
+        <td style="font-size:0.8rem;color:var(--muted)">{{ m.join_date }}</td>
+        <td style="font-size:0.8rem;{% if m.status=='Expired' %}color:var(--expired){% else %}color:var(--muted){% endif %}">{{ m.expiry_date }}</td>
+        <td><span class="badge badge-{{ m.status|lower }}">{{ m.status }}</span></td>
+        <td>
+          <div class="actions">
+            <a href="/member/{{ m.id }}/edit" class="btn btn-ghost btn-sm">Edit</a>
+            <form method="POST" action="/member/{{ m.id }}/renew" style="display:inline">
+              <button type="submit" class="btn btn-renew btn-sm">Renew</button>
+            </form>
+            <form method="POST" action="/member/{{ m.id }}/delete" style="display:inline"
+                  onsubmit="return confirm('Remove {{ m.name }}?')">
+              <button type="submit" class="btn btn-danger btn-sm">✕</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <div style="font-size:2.5rem">👥</div>
+    <h3 style="margin-top:0.5rem">No members found</h3>
+    <p style="font-size:0.85rem;margin-top:0.3rem">Try a different filter or enroll a new member.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

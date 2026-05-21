@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — FitTrack Pro{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block topbar_right %}
+  <a href="/member/new" class="btn btn-accent">＋ Enroll Member</a>
+{% endblock %}
+
+{% block content %}
+<!-- STATS -->
+<div class="grid-4">
+  <div class="card stat-card">
+    <div class="label">Total Members</div>
+    <div class="value" style="color:#a78bfa">{{ stats.total }}</div>
+    <div class="sub">All enrolled</div>
+    <div class="icon-bg">👥</div>
+  </div>
+  <div class="card stat-card">
+    <div class="label">Active</div>
+    <div class="value" style="color:var(--accent)">{{ stats.active }}</div>
+    <div class="sub">Valid memberships</div>
+    <div class="icon-bg">✅</div>
+  </div>
+  <div class="card stat-card">
+    <div class="label">Expired</div>
+    <div class="value" style="color:var(--expired)">{{ stats.expired }}</div>
+    <div class="sub">Need renewal</div>
+    <div class="icon-bg">⚠️</div>
+  </div>
+  <div class="card stat-card">
+    <div class="label">Today's Check-ins</div>
+    <div class="value" style="color:var(--annual)">{{ stats.checkins_today }}</div>
+    <div class="sub">Active today</div>
+    <div class="icon-bg">🏋️</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- EXPIRING SOON -->
+  <div class="card">
+    <div class="sec-header">
+      <h3>⚠ Expiring This Week</h3>
+    </div>
+    {% if expiring_soon %}
+    <div class="alert-box">
+      <h4>{{ expiring_soon|length }} member(s) expiring within 7 days</h4>
+      {% for m in expiring_soon %}
+      <div class="alert-item">
+        <span>{{ m.name }} <span style="color:var(--muted);font-size:0.78rem;">({{ m.plan }})</span></span>
+        <span style="color:var(--annual);font-size:0.8rem;">Exp: {{ m.expiry_date }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="color:var(--muted);font-size:0.85rem;">No memberships expiring this week 🎉</p>
+    {% endif %}
+  </div>
+
+  <!-- RECENT MEMBERS -->
+  <div class="card">
+    <div class="sec-header">
+      <h3>Recent Enrollments</h3>
+      <a href="/members" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <table>
+      <thead><tr><th>Name</th><th>Plan</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for m in recent %}
+        <tr>
+          <td>
+            <div style="font-weight:600">{{ m.name }}</div>
+            <div style="font-size:0.75rem;color:var(--muted)">{{ m.email }}</div>
+          </td>
+          <td><span class="badge badge-{{ m.plan|lower }}">{{ m.plan }}</span></td>
+          <td><span class="badge badge-{{ m.status|lower }}">{{ m.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PLAN OVERVIEW -->
+<div class="card" style="margin-top:1.2rem">
+  <div class="sec-header"><h3>Membership Plans</h3></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:0.5rem;">
+    {% for pname, pinfo in plans.items() %}
+    <div style="border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center;">
+      <div class="badge badge-{{ pname|lower }}" style="margin-bottom:0.5rem;">{{ pname }}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--accent)">₹{{ pinfo.price }}</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">{{ pinfo.duration }} days</div>
+      <div style="font-size:0.75rem;color:var(--muted);">{{ pinfo.features }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- TOTAL REVENUE -->
+<div class="card" style="margin-top:1.2rem;display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Total Revenue Collected</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent)">₹{{ '{:,.0f}'.format(stats.revenue) }}</div>
+  </div>
+  <a href="/payments" class="btn btn-accent">View Payment Logs →</a>
+</div>
+{% endblock %}

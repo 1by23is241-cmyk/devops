@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Attendance — FitTrack Pro{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+  <!-- CHECK-IN FORM -->
+  <div class="card">
+    <div class="sec-header"><h3>🏋️ Member Check-In</h3></div>
+    <form method="POST">
+      <div class="form-group">
+        <label>Select Member</label>
+        <select name="member_id" required>
+          <option value="">-- Choose active member --</option>
+          {% for m in all_members %}
+          <option value="{{ m.id }}">{{ m.name }} ({{ m.plan }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-accent" style="width:100%;justify-content:center;">
+        ✅ Mark Check-In
+      </button>
+    </form>
+  </div>
+
+  <!-- TODAY STATS -->
+  <div class="card">
+    <div class="sec-header"><h3>📅 Today's Summary</h3></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--accent);line-height:1">
+      {{ today_log|length }}
+    </div>
+    <div style="color:var(--muted);font-size:0.85rem;margin-top:0.3rem">members checked in today</div>
+  </div>
+</div>
+
+<!-- TODAY'S LOG -->
+<div class="card" style="margin-top:1.2rem">
+  <div class="sec-header"><h3>Today's Attendance Log</h3></div>
+  {% if today_log %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Member</th><th>Plan</th><th>Check-In Time</th></tr>
+    </thead>
+    <tbody>
+      {% for a in today_log %}
+      <tr>
+        <td style="color:var(--muted);font-size:0.78rem;">{{ loop.index }}</td>
+        <td style="font-weight:600">{{ a.name }}</td>
+        <td><span class="badge badge-{{ a.plan|lower }}">{{ a.plan }}</span></td>
+        <td style="font-family:monospace;font-size:0.82rem;color:var(--muted)">{{ a.check_in }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <div style="font-size:2rem">🏃</div>
+    <h3>No check-ins yet today</h3>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

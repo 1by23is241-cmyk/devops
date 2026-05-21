@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}FitTrack Pro{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --card: #161616;
+  --border: #242424;
+  --accent: #c8f542;
+  --accent2: #ff4d4d;
+  --text: #f0f0f0;
+  --muted: #666;
+  --active: #c8f542;
+  --expired: #ff4d4d;
+  --basic: #60a5fa;
+  --standard: #a78bfa;
+  --premium: #fb923c;
+  --annual: #f59e0b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; display:flex; min-height:100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px; min-height:100vh; background:var(--card);
+  border-right:1px solid var(--border); display:flex; flex-direction:column;
+  position:fixed; top:0; left:0; bottom:0;
+}
+.sidebar-logo {
+  padding: 1.5rem 1.2rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo h1 {
+  font-family:'Bebas Neue',sans-serif; font-size:1.8rem;
+  color:var(--accent); letter-spacing:2px; line-height:1;
+}
+.sidebar-logo p { font-size:0.7rem; color:var(--muted); margin-top:2px; }
+nav { padding:1rem 0; flex:1; }
+nav a {
+  display:flex; align-items:center; gap:0.7rem;
+  padding:0.7rem 1.2rem; color:var(--muted); text-decoration:none;
+  font-size:0.88rem; font-weight:500; transition:all 0.15s;
+  border-left:3px solid transparent;
+}
+nav a:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+nav a.active { color:var(--accent); border-left-color:var(--accent); background:rgba(200,245,66,0.06); }
+nav a .icon { font-size:1.1rem; width:20px; text-align:center; }
+.sidebar-footer { padding:1rem 1.2rem; border-top:1px solid var(--border); font-size:0.72rem; color:var(--muted); }
+
+/* MAIN */
+.main { margin-left:220px; flex:1; display:flex; flex-direction:column; }
+.topbar {
+  padding:1rem 1.8rem; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--card); position:sticky; top:0; z-index:50;
+}
+.topbar h2 { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:1px; color:var(--text); }
+.content { padding:1.8rem; flex:1; }
+
+/* CARDS */
+.card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+.stat-card { position:relative; overflow:hidden; }
+.stat-card .label { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.stat-card .value { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; margin-top:0.2rem; line-height:1; }
+.stat-card .sub { font-size:0.75rem; color:var(--muted); margin-top:0.3rem; }
+.stat-card .icon-bg { position:absolute; right:1rem; top:50%; transform:translateY(-50%); font-size:2.5rem; opacity:0.1; }
+
+/* BUTTONS */
+.btn { display:inline-flex; align-items:center; gap:0.4rem; padding:0.55rem 1.1rem; border-radius:6px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; text-decoration:none; border:none; transition:all 0.15s; }
+.btn-accent { background:var(--accent); color:#000; }
+.btn-accent:hover { opacity:0.85; transform:translateY(-1px); }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+.btn-ghost:hover { color:var(--text); border-color:#444; }
+.btn-danger { background:transparent; color:var(--expired); border:1px solid rgba(255,77,77,0.3); }
+.btn-danger:hover { background:var(--expired); color:#fff; }
+.btn-sm { padding:0.28rem 0.65rem; font-size:0.78rem; border-radius:5px; }
+.btn-renew { background:rgba(200,245,66,0.12); color:var(--accent); border:1px solid rgba(200,245,66,0.3); }
+.btn-renew:hover { background:var(--accent); color:#000; }
+
+/* TABLE */
+table { width:100%; border-collapse:collapse; }
+thead th { font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); padding:0.6rem 0.9rem; text-align:left; border-bottom:1px solid var(--border); }
+tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+tbody tr:hover { background:rgba(255,255,255,0.02); }
+td { padding:0.8rem 0.9rem; font-size:0.86rem; vertical-align:middle; }
+
+/* BADGES */
+.badge { display:inline-block; padding:0.18rem 0.6rem; border-radius:4px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.badge-active   { background:rgba(200,245,66,0.12); color:var(--active); border:1px solid rgba(200,245,66,0.25); }
+.badge-expired  { background:rgba(255,77,77,0.12); color:var(--expired); border:1px solid rgba(255,77,77,0.25); }
+.badge-basic    { background:rgba(96,165,250,0.12); color:var(--basic); border:1px solid rgba(96,165,250,0.25); }
+.badge-standard { background:rgba(167,139,250,0.12); color:var(--standard); border:1px solid rgba(167,139,250,0.25); }
+.badge-premium  { background:rgba(251,146,60,0.12); color:var(--premium); border:1px solid rgba(251,146,60,0.25); }
+.badge-annual   { background:rgba(245,158,11,0.12); color:var(--annual); border:1px solid rgba(245,158,11,0.25); }
+
+/* FLASH */
+.flash { padding:0.75rem 1rem; border-radius:6px; margin-bottom:1rem; font-size:0.88rem; font-weight:500; }
+.flash-success { background:rgba(200,245,66,0.1); color:var(--accent); border:1px solid rgba(200,245,66,0.3); }
+.flash-error   { background:rgba(255,77,77,0.1); color:var(--expired); border:1px solid rgba(255,77,77,0.3); }
+.flash-info    { background:rgba(100,100,100,0.1); color:var(--muted); border:1px solid var(--border); }
+
+/* FORM */
+.form-wrap { max-width:600px; }
+.form-group { margin-bottom:1.1rem; }
+.form-group label { display:block; font-size:0.78rem; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.5px; }
+.form-group input, .form-group select {
+  width:100%; padding:0.65rem 0.9rem; background:#1c1c1c; border:1px solid var(--border);
+  border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem;
+  transition:border 0.15s;
+}
+.form-group input:focus, .form-group select:focus { outline:none; border-color:var(--accent); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.plan-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:0.8rem; margin-top:0.4rem; }
+.plan-card { border:2px solid var(--border); border-radius:8px; padding:0.8rem; cursor:pointer; transition:all 0.15s; }
+.plan-card:hover { border-color:#444; }
+.plan-card.selected { border-color:var(--accent); background:rgba(200,245,66,0.06); }
+.plan-card h4 { font-size:0.9rem; font-weight:700; }
+.plan-card .price { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent); }
+.plan-card .feat { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+
+/* SECTION HEADER */
+.sec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.sec-header h3 { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:1px; }
+
+/* SEARCH/FILTER */
+.filter-bar { display:flex; gap:0.7rem; margin-bottom:1rem; flex-wrap:wrap; }
+.filter-bar input, .filter-bar select { padding:0.5rem 0.8rem; background:#1c1c1c; border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; }
+.filter-bar input:focus, .filter-bar select:focus { outline:none; border-color:var(--accent); }
+
+/* ALERT BOX */
+.alert-box { border-left:3px solid var(--annual); background:rgba(245,158,11,0.06); border-radius:0 8px 8px 0; padding:0.8rem 1rem; margin-bottom:1.2rem; }
+.alert-box h4 { font-size:0.8rem; color:var(--annual); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+.alert-item { display:flex; justify-content:space-between; align-items:center; padding:0.3rem 0; font-size:0.83rem; border-bottom:1px solid rgba(245,158,11,0.1); }
+.alert-item:last-child { border:none; }
+
+.empty { text-align:center; padding:3rem; color:var(--muted); }
+.actions { display:flex; gap:0.4rem; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>FitTrack</h1>
+    <p>Gym Management System</p>
+  </div>
+  <nav>
+    <a href="/" class="{{ 'active' if request.endpoint=='index' }}" ><span class="icon">📊</span> Dashboard</a>
+    <a href="/members" class="{{ 'active' if request.endpoint in ['members','new_member','edit_member'] }}"><span class="icon">👥</span> Members</a>
+    <a href="/attendance" class="{{ 'active' if request.endpoint=='attendance' }}"><span class="icon">✅</span> Attendance</a>
+    <a href="/payments" class="{{ 'active' if request.endpoint=='payments' }}"><span class="icon">💰</span> Payments</a>
+  </nav>
+  <div class="sidebar-footer">FitTrack Pro v1.0 · Docker Ready</div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+    {% block topbar_right %}{% endblock %}
+  </div>
+  <div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+</body>
+</html>

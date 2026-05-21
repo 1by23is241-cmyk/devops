@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Payments — FitTrack Pro{% endblock %}
+{% block page_title %}Payment Logs{% endblock %}
+
+{% block content %}
+<!-- TOTAL -->
+<div class="card" style="margin-bottom:1.2rem;display:flex;align-items:center;gap:2rem;">
+  <div>
+    <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Total Revenue</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent)">₹{{ '{:,.0f}'.format(total) }}</div>
+  </div>
+  <div style="width:1px;height:50px;background:var(--border)"></div>
+  <div>
+    <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Total Transactions</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--standard)">{{ logs|length }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="sec-header"><h3>All Transactions</h3></div>
+  {% if logs %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Member</th><th>Plan</th><th>Amount</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% for p in logs %}
+      <tr>
+        <td style="color:var(--muted);font-size:0.78rem;">{{ '%04d'%p.id }}</td>
+        <td style="font-weight:600">{{ p.name }}</td>
+        <td><span class="badge badge-{{ p.plan|lower }}">{{ p.plan }}</span></td>
+        <td style="color:var(--accent);font-weight:700">₹{{ '{:,.0f}'.format(p.amount) }}</td>
+        <td style="color:var(--muted);font-size:0.82rem">{{ p.payment_date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty"><h3>No payment records yet.</h3></div>
+  {% endif %}
+</div>
+{% endblock %}
